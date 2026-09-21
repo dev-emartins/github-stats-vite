@@ -44,7 +44,7 @@ function App() {
         {loading && !stats ? <div className="space-y-6"><LoadingCard /><div className="grid gap-6 lg:grid-cols-2"><LoadingCard /><LoadingCard /></div></div> : stats ? <>
           <ProfileCard profile={stats.profile} contributions={stats.contributions} />
           <div className="mt-6 grid gap-6 lg:grid-cols-2"><CommitsCard commits={stats.commits} /><LanguagesCard languages={stats.languages} /></div>
-          <div className="mt-8"><h2 className="mb-3 text-xl font-semibold">Data source</h2><Card className="flex items-center gap-3 p-4 text-sm text-slate-500"><Server size={18} /><span>GitHub Public API + cache local. Gráficos de atividade usam eventos públicos disponíveis na API.</span></Card></div>
+          <div className="mt-8"><h2 className="mb-3 text-xl font-semibold">Data source</h2><Card className="flex items-center gap-3 p-4 text-sm text-slate-500"><Server size={18} /><span>GitHub REST + GraphQL API autenticadas e cache local. Repositórios e contribuições privadas dependem das permissões do token.</span></Card></div>
         </> : null}
       </div>
     </main>

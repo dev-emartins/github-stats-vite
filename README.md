@@ -9,7 +9,7 @@ Dashboard em **Vite + React + Tailwind CSS v4** para exibir estatísticas públi
 - Tailwind CSS 4
 - Recharts
 - Lucide React
-- GitHub REST API
+- GitHub REST + GraphQL API
 
 ## Executar
 
@@ -22,44 +22,45 @@ Abra o endereço informado pelo Vite.
 
 ## Configuração
 
-Copie `.env.example` para `.env`:
+Copie `.env.example` para `.env` e configure um token do GitHub:
 
 ```env
 VITE_GITHUB_USERNAME=dev-emartins
 VITE_GITHUB_CACHE_MINUTES=30
+GITHUB_USERNAME=dev-emartins
+GITHUB_TOKEN=github_pat_seu_token
+GITHUB_CACHE_MINUTES=30
 ```
+
+Use um Fine-grained Personal Access Token com acesso aos repositórios desejados e permissões `Metadata: Read-only` e `Contents: Read-only`. Para organizações privadas, conceda também o acesso necessário à organização.
+
+O token é usado somente pelo backend em `server/githubServer.js`. Nunca use `VITE_GITHUB_TOKEN`, pois variáveis `VITE_*` ficam expostas no navegador.
 
 ## Observação importante
 
 O projeto não utiliza `github-readme-stats`, `github-profile-summary-cards` ou outro serviço de geração de imagem/card.
 
-Os dados são obtidos diretamente da API pública do GitHub e armazenados em cache no navegador.
+Os dados são obtidos pelo backend autenticado e armazenados em cache no navegador.
 
 Isso elimina o limite de visualizações imposto por serviços de cards externos, mas **a API pública do GitHub continua possuindo rate limit**.
 
-### Para produção
+### Arquitetura
 
 A arquitetura recomendada é:
 
 ```text
-GitHub API
-    ↓
-Backend / Cache
-    ↓
-GET /api/github/*
-    ↓
 React + Vite
+    ↓
+GET /api/github/stats
+    ↓
+Backend Node autenticado
+    ↓
+GitHub REST + GraphQL API
 ```
 
-Assim, o navegador não precisa chamar o GitHub a cada visualização.
+## Dados privados
 
-## Limitação dos dados públicos
-
-A API REST pública não fornece diretamente toda a informação exibida no gráfico de contribuições privado do perfil.
-
-O projeto atual usa uma aproximação baseada em atividade pública dos repositórios.
-
-Para reproduzir o gráfico de contribuições do GitHub com maior fidelidade, utilize GitHub GraphQL API através de um backend.
+Os repositórios são obtidos por `/user/repos?visibility=all` e o gráfico de contribuições usa `viewer.contributionsCollection` da GraphQL API, incluindo contribuições privadas permitidas pelo token e pelas configurações de privacidade do GitHub. O gráfico de commits por hora é calculado a partir do histórico dos repositórios aos quais o token tem acesso.
 
 ## Estrutura
 
@@ -76,4 +77,6 @@ github-stats-vite/
 ├── package.json
 ├── vite.config.js
 └── README.md
+└── server/
+    └── githubServer.js
 ```
