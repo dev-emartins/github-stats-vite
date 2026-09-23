@@ -58,6 +58,20 @@ Backend Node autenticado
 GitHub REST + GraphQL API
 ```
 
+## Deploy na Vercel
+
+O projeto já está preparado para deploy na Vercel:
+
+- O frontend é construído com `vite build` (detectado automaticamente pela Vercel).
+- O endpoint `GET /api/github/stats` é servido por uma Serverless Function em `api/github/stats.js`, que reutiliza a lógica de `api/_lib/github.js`.
+- `server/githubServer.js` continua existindo apenas para desenvolvimento local (`npm run dev`) e não é usado em produção na Vercel.
+
+Passos:
+
+1. Importe o repositório na Vercel.
+2. Em **Project Settings → Environment Variables**, configure `GITHUB_TOKEN` (e opcionalmente `GITHUB_CACHE_MINUTES`, `VITE_GITHUB_USERNAME`, `VITE_GITHUB_CACHE_MINUTES`).
+3. Faça o deploy — build command `vite build` e output directory `dist` são detectados automaticamente.
+
 ## Dados privados
 
 Os repositórios são obtidos por `/user/repos?visibility=all` e o gráfico de contribuições usa `viewer.contributionsCollection` da GraphQL API, incluindo contribuições privadas permitidas pelo token e pelas configurações de privacidade do GitHub. O gráfico de commits por hora é calculado a partir do histórico dos repositórios aos quais o token tem acesso.
